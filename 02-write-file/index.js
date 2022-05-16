@@ -14,16 +14,18 @@ const readlineConsole = readline.createInterface({
 });
 const sayGoodBye = () => {
   readlineConsole.close();
+  readlineConsole.off('line', inputHandler);
   output.write('Тебе еще многое предстоит\n');
   exit();
 };
-
-readlineConsole.write('Молви друг и войди:\n');
-readlineConsole.on('SIGINT', () => sayGoodBye());
-readlineConsole.on('line', (input) => {
+const inputHandler = (input) => {
   if (input === 'exit') {
     sayGoodBye();
   } else {
     toFileStream.write(input);
   }
-});
+};
+
+readlineConsole.write('Молви друг и войди:\n');
+readlineConsole.on('SIGINT', () => sayGoodBye());
+readlineConsole.on('line', inputHandler);
