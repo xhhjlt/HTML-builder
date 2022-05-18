@@ -11,7 +11,7 @@ const showFiles = (files) => {
         let name = path.basename(filePath, ext);
         ext = ext.slice(1);
         let size = file.size;
-        console.log(`${name} - ${ext} - ${size}b`);
+        console.log(`${name} - ${ext} - ${size}bytes`);
       }
     }, err => console.log(err));
     
