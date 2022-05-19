@@ -22,7 +22,7 @@ const inputHandler = (input) => {
   if (input === 'exit') {
     sayGoodBye();
   } else {
-    toFileStream.write(input);
+    toFileStream.write(`${input}\n`);
   }
 };
 
