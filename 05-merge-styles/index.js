@@ -15,8 +15,3 @@ const bundleStyles = (stylesPath, bundlePath) => {
 };
 
 fs.writeFile(bundlePath, '').then(() => bundleStyles(stylesPath, bundlePath));
-
-
-
-
-
