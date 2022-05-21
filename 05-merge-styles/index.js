@@ -8,7 +8,7 @@ const bundleStyles = (stylesPath, bundlePath) => {
     for (let i = 0; i < fileDirents.length; i++) {
       let filePath = path.resolve(stylesPath, fileDirents[i].name);
       let fileExt = path.extname(filePath);
-      if (fileDirents[i].isFile() && fileExt === '.css') {
+      if (fileDirents[i].isFile() && fileExt.toLocaleUpperCase() === '.CSS') {
         fs.readFile(filePath, 'utf-8').then(data => fs.appendFile(bundlePath, `${data}\n`) , err => console.log(err));
       }}
   }, err => console.log(err));
