@@ -9,26 +9,21 @@ const distDir = path.resolve(__dirname, 'project-dist');
 const distHTML = path.resolve(distDir, 'index.html');
 const distCSS = path.resolve(distDir, 'style.css');
 
-let template = fs.readFile(templateFile, 'utf-8');
-let components = {};
-fs.readdir(componentsDir, {withFileTypes: true}).then(data => {
-  for (let i = 0; i < data.length; i++) {
-    let componentPath = path.resolve(componentsDir, data[i].name);
-    let componentExt = path.extname(componentPath);
-    let componentName = path.basename(componentPath, componentExt);
-    if (componentExt.toLocaleUpperCase() === '.HTML' && data[i].isFile()) {
-      components[componentName] = fs.readFile(componentPath, 'utf-8');
+const resolveTemplate = (resultHTML, components) => {
+  let tags = resultHTML.match(/{{\w*}}/gs) || [];
+  for (let i = 0; i < tags.length; i++) {
+    let tag = tags[i].slice(2, -2);
+    if (!Object.keys(components).includes(tag.toLowerCase())) {
+      let regexp = new RegExp (`{{${tag}}}`, 'gi');
+      resultHTML = resultHTML.replace(regexp, '');
     }
   }
-}, err => console.log(err));
-
-const resolveTemplate = (str) => {
-  let resultHTML = str;
   fs.writeFile(distHTML, resultHTML);
 
   for (let key in components) {
     components[key].then(data => {
-      resultHTML = resultHTML.replace(`{{${key}}}`, data);
+      let regexp = new RegExp (`{{${key}}}`, 'gi');
+      resultHTML = resultHTML.replace(regexp, data);
       fs.writeFile(distHTML, resultHTML);
     }, err => console.log(err));
   }
@@ -64,19 +59,57 @@ const bundleStyles = (stylesPath, bundlePath) => {
   }, err => console.log(err));
 };
 
-fs.rm(distDir, {
-  recursive: true,
-  force: true
-}).finally(() =>
-  fs.mkdir(distDir, {
-    recursive: true
-  }).then(() => {
-    fs.writeFile(distHTML, '').then(() => {
-      template.then((data) => {
-        resolveTemplate(data);
-      }, err => console.log(err));
-    }, err => console.log(err));
-    copyDir(assetsDir, path.resolve(distDir, 'assets'));
-    fs.writeFile(distCSS, '').then(() => bundleStyles(stylesDir, distCSS));
-  }, err => console.log(err))
-);
+fs.readdir(__dirname, {withFileTypes: true}).then(dirArr => {
+  let needs = {'assets':'folder', 'components':'folder', 'styles':'folder', 'template.html':'file'};
+  for (let key in needs) {
+    let isExist = false; 
+    let isRightType = false;
+    for (let i = 0; i < dirArr.length; i++) {
+      if (dirArr[i].name === key) {
+        isExist = true;
+        if (needs[key] === 'folder' && dirArr[i].isDirectory) isRightType = true;
+        if (needs[key] === 'file' && dirArr[i].isFile) isRightType = true;
+      }
+    }
+    if (!(isExist && isRightType)) {
+      console.log(`You need "${key}" ${needs[key]} for build-page script`);
+      process.exit();
+    }
+  }
+  fs.readdir(componentsDir, {withFileTypes: true}).then(data => {
+
+    let components = {};
+    for (let i = 0; i < data.length; i++) {
+      let componentPath = path.resolve(componentsDir, data[i].name);
+      let componentExt = path.extname(componentPath);
+      let componentName = path.basename(componentPath, componentExt).toLowerCase();
+      if (componentExt.toLocaleUpperCase() === '.HTML' && data[i].isFile()) {
+        components[componentName] = fs.readFile(componentPath, 'utf-8');
+      }
+    }
+
+    let template = fs.readFile(templateFile, 'utf-8');
+
+    fs.rm(distDir, {
+      recursive: true,
+      force: true
+    }).finally(() =>
+      fs.mkdir(distDir, {
+        recursive: true
+      }).then(() => {
+
+        fs.writeFile(distHTML, '').then(() => {
+          template.then((data) => {
+            resolveTemplate(data, components);
+          }, err => console.log(err));
+        }, err => console.log(err));
+
+        copyDir(assetsDir, path.resolve(distDir, 'assets'));
+
+        fs.writeFile(distCSS, '').then(() => bundleStyles(stylesDir, distCSS), err => console.log(err));
+
+      }, err => console.log(err))
+    );
+  }, err => console.log(err));
+}, err => console.log(err));
+
