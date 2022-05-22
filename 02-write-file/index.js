@@ -19,7 +19,7 @@ const sayGoodBye = () => {
   exit();
 };
 const inputHandler = (input) => {
-  if (input === 'exit') {
+  if (input.trim() === 'exit') {
     sayGoodBye();
   } else {
     toFileStream.write(`${input}\n`);
