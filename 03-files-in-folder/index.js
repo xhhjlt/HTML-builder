@@ -13,10 +13,10 @@ const showFiles = (files) => {
         let size = file.size;
         console.log(`${name} - ${ext} - ${size}bytes`);
       }
-    }, err => console.log(err));
+    }, () => console.log('Оглянитесь по сторонам...произошло что-то непонятное...'));
     
   }
 };
 
 const files = fs.readdir(secretFolder);
-files.then(result => showFiles(result), err => console.log(err));
+files.then(result => showFiles(result), () => console.log('Оглянитесь по сторонам...произошло что-то непонятное...'));

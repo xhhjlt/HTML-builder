@@ -12,11 +12,11 @@ function copyDir(basePath, copyPath) {
         for (let i = 0; i < files.length; i++) {
           fs.mkdir(copyPath, {recursive: true}).finally(() => copyDir(path.resolve(basePath, files[i]), path.resolve(copyPath, files[i])));
         }
-      }, err => console.log(err));
+      }, () => console.log('Оглянитесь по сторонам...произошло что-то непонятное...'));
     } else {
       fs.writeFile(copyPath, '').finally(() => fs.copyFile(basePath, copyPath));
     }
-  }, err => console.log(err));
+  }, () => console.log('Оглянитесь по сторонам...произошло что-то непонятное...'));
 }
 
 fs.rm(copyOfFolder, { recursive: true, force: true }).finally(() => {copyDir(baseFolder, copyOfFolder);});

@@ -25,7 +25,7 @@ const resolveTemplate = (resultHTML, components) => {
       let regexp = new RegExp (`{{${key}}}`, 'gi');
       resultHTML = resultHTML.replace(regexp, data);
       fs.writeFile(distHTML, resultHTML);
-    }, err => console.log(err));
+    }, () => console.log('Оглянитесь по сторонам...произошло что-то непонятное...'));
   }
 };
 
@@ -40,11 +40,11 @@ function copyDir(basePath, copyPath) {
             recursive: true
           }).finally(() => copyDir(path.resolve(basePath, files[i]), path.resolve(copyPath, files[i])));
         }
-      }, err => console.log(err));
+      }, () => console.log('Оглянитесь по сторонам...произошло что-то непонятное...'));
     } else {
       fs.writeFile(copyPath, '').finally(() => fs.copyFile(basePath, copyPath));
     }
-  }, err => console.log(err));
+  }, () => console.log('Оглянитесь по сторонам...произошло что-то непонятное...'));
 }
 
 const bundleStyles = (stylesPath, bundlePath) => {
@@ -53,10 +53,10 @@ const bundleStyles = (stylesPath, bundlePath) => {
       let filePath = path.resolve(stylesPath, fileDirents[i].name);
       let fileExt = path.extname(filePath);
       if (fileDirents[i].isFile() && fileExt === '.css') {
-        fs.readFile(filePath, 'utf-8').then(data => fs.appendFile(bundlePath, `${data}\n`), err => console.log(err));
+        fs.readFile(filePath, 'utf-8').then(data => fs.appendFile(bundlePath, `${data}\n`), () => console.log('Оглянитесь по сторонам...произошло что-то непонятное...'));
       }
     }
-  }, err => console.log(err));
+  }, () => console.log('Оглянитесь по сторонам...произошло что-то непонятное...'));
 };
 
 fs.readdir(__dirname, {withFileTypes: true}).then(dirArr => {
@@ -101,15 +101,15 @@ fs.readdir(__dirname, {withFileTypes: true}).then(dirArr => {
         fs.writeFile(distHTML, '').then(() => {
           template.then((data) => {
             resolveTemplate(data, components);
-          }, err => console.log(err));
-        }, err => console.log(err));
+          }, () => console.log('Оглянитесь по сторонам...произошло что-то непонятное...'));
+        }, () => console.log('Оглянитесь по сторонам...произошло что-то непонятное...'));
 
         copyDir(assetsDir, path.resolve(distDir, 'assets'));
 
-        fs.writeFile(distCSS, '').then(() => bundleStyles(stylesDir, distCSS), err => console.log(err));
+        fs.writeFile(distCSS, '').then(() => bundleStyles(stylesDir, distCSS), () => console.log('Оглянитесь по сторонам...произошло что-то непонятное...'));
 
-      }, err => console.log(err))
+      }, () => console.log('Оглянитесь по сторонам...произошло что-то непонятное...'))
     );
-  }, err => console.log(err));
-}, err => console.log(err));
+  }, () => console.log('Оглянитесь по сторонам...произошло что-то непонятное...'));
+}, () => console.log('Оглянитесь по сторонам...произошло что-то непонятное...'));
 

@@ -9,9 +9,9 @@ const bundleStyles = (stylesPath, bundlePath) => {
       let filePath = path.resolve(stylesPath, fileDirents[i].name);
       let fileExt = path.extname(filePath);
       if (fileDirents[i].isFile() && fileExt.toLocaleUpperCase() === '.CSS') {
-        fs.readFile(filePath, 'utf-8').then(data => fs.appendFile(bundlePath, `${data}\n`) , err => console.log(err));
+        fs.readFile(filePath, 'utf-8').then(data => fs.appendFile(bundlePath, `${data}\n`) , () => console.log('Оглянитесь по сторонам...произошло что-то непонятное...'));
       }}
-  }, err => console.log(err));
+  }, () => console.log('Оглянитесь по сторонам...произошло что-то непонятное...'));
 };
 
 fs.writeFile(bundlePath, '').then(() => bundleStyles(stylesPath, bundlePath));
