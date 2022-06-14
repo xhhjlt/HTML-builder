@@ -19,14 +19,18 @@ const resolveTemplate = (resultHTML, components) => {
     }
   }
   fs.writeFile(distHTML, resultHTML);
-
-  for (let key in components) {
-    components[key].then(data => {
-      let regexp = new RegExp (`{{${key}}}`, 'gi');
-      resultHTML = resultHTML.replace(regexp, data);
-      fs.writeFile(distHTML, resultHTML);
-    }, () => console.log('Оглянитесь по сторонам...произошло что-то непонятное...'));
-  }
+  let takeComponents = Promise.all(Object.values(components));
+  takeComponents.then(() => {
+    for (let key in components) {
+      components[key].then(data => {
+        let regexp = new RegExp (`{{${key}}}`, 'gi');
+        resultHTML = resultHTML.replace(regexp, data);
+      });
+    }
+    
+  }, () => console.log('Оглянитесь по сторонам...произошло что-то непонятное...')).finally(() => {
+    fs.writeFile(distHTML, resultHTML);
+  });
 };
 
 function copyDir(basePath, copyPath) {
